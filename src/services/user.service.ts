@@ -1,5 +1,5 @@
-import { db } from '../config/db.firebase';
 import { collection, doc, getDoc, addDoc, query, where, getDocs, serverTimestamp } from 'firebase/firestore';
+import { db } from '../config/db.firebase';
 import { User } from '../models/user.model';
 
 const usersCollectionRef = collection(db, 'users');

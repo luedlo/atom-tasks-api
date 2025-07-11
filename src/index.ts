@@ -15,8 +15,8 @@ class App {
   public port: number;
 
   constructor(port: number) {
-    this.app = express();
     this.port = port;
+    this.app = express();
     this.initializeMiddleware();
     this.initializeRoutes();
   }

@@ -32,6 +32,7 @@ This project is the backend for a task management application, built with Node.j
   * **CORS:** To manage cross-origin security policies.
   * **ts-node:** For TypeScript execution in development.
   * **dotenv:** For environment variable management.
+  * **Esbuild:** Fast bundler and minifier for production builds.
 
 -----
 
@@ -62,15 +63,12 @@ Make sure you have the following installed:
     yarn install
     ```
 
+    *(Note: Esbuild is now included as a dependency for bundling and minification.)*
+
 3.  **Configure environment variables:**
     Create a `.env` file in the root of the `atom-tasks` directory (next to `package.json`) and add your Firebase credentials and JWT key.
 
     ```dotenv
-    # Application
-    API_NAME="atom-tasks-api"
-    PORT=3000
-    FRONT_URL='http://localhost:4200'
-
     # Firebase Configuration (get from your Firebase project settings)
     FIREBASE_API_KEY="your_api_key"
     FIREBASE_AUTH_DOMAIN="your_auth_domain"
@@ -82,6 +80,11 @@ Make sure you have the following installed:
     # JWT Secret (generate a strong, secure key)
     JWT_SECRET="A_SUPER_STRONG_AND_LONG_SECRET_KEY_HERE"
     JWT_EXPIRES_IN="1h" # Or your desired time, e.g., "7d"
+
+    # App
+    API_NAME="atom-tasks-api"
+    PORT=3000
+    FRONT_URL='http://localhost:4200'
     ```
 
 4.  **Configure Firebase in `src/config/firebase.ts`:**
@@ -135,8 +138,10 @@ Make sure you have the following installed:
 This project offers scripts defined in `package.json` for different scenarios:
 
   * **`npm run dev`**: Starts the server in **development mode**. It uses `ts-node-dev` to automatically recompile and restart the server whenever it detects changes in `.ts` files. Ideal for rapid development.
-  * **`npm run build`**: **Compiles** the TypeScript code to JavaScript. The compiled files will be saved in the `dist/` directory. This step is necessary before deploying to production.
-  * **`npm start`**: Starts the server in **production mode**. It executes the compiled JavaScript code located in `dist/`.
+  * **`npm run build`**: **Compiles** the TypeScript code to JavaScript. The compiled files will be saved in the `dist/` directory. This step is necessary before running `minify` or deploying.
+  * **`npm run minify`**: Uses **Esbuild** to take the JavaScript output from `tsc`, **bundle** all dependencies into a single file, and **minify** the code. This creates `dist/bundle.min.js`, which is optimized for production.
+  * **`npm start`**: Starts the server in **production mode** directly from the TypeScript compiler's output (`dist/index.js`), *without* additional bundling or minification.
+  * **`npm run start:prod`**: Runs `npm run build`, then `npm run minify`, and finally starts the server using the **bundled and minified** `dist/bundle.min.js` file. This is the recommended command for actual production deployment.
 
 ### `package.json` Commands Explained
 
@@ -145,14 +150,16 @@ Here are the commands available in the `scripts` section of your `package.json`:
 ```json
 // package.json
 {
-  "name": "atom-tasks",
+  "name": "atom-tasks-api",
   "version": "1.0.0",
   "description": "Backend for task management with Node.js, Express, TypeScript, and Firestore.",
-  "main": "dist/index.js", // Main entry point after compilation
+  "main": "dist/index.js", // Main entry point after initial TypeScript compilation
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
     "build": "tsc",
-    "start": "node dist/index.js"
+    "minify": "esbuild dist/index.js --bundle --minify --outfile=dist/bundle.min.js --platform=node --sourcemap",
+    "start": "node dist/index.js",
+    "start:prod": "npm run build && npm run minify && node dist/bundle.min.js"
   },
   // ... other configurations and dependencies
 }
@@ -161,24 +168,32 @@ Here are the commands available in the `scripts` section of your `package.json`:
   * **`npm run dev`**:
 
       * **Command:** `ts-node-dev --respawn --transpile-only src/index.ts`
-      * **Purpose:** This script is your primary tool during development.
-          * `ts-node-dev`: A utility that combines `ts-node` (executes TypeScript directly without prior compilation) with `nodemon` (watches for changes and restarts the server).
-          * `--respawn`: Ensures the server restarts if it crashes.
-          * `--transpile-only`: Performs only transpilation without type checking (making it faster), useful for rapid development cycles. Type errors will be caught during `build`.
-          * `src/index.ts`: The main entry file for your application.
+      * **Purpose:** Your primary tool during development. It compiles and restarts on file changes.
       * **Usage:** `npm run dev`
 
   * **`npm run build`**:
 
       * **Command:** `tsc`
-      * **Purpose:** This script compiles all your TypeScript code (`.ts`) into plain JavaScript (`.js`). The resulting files are placed in the `dist/` directory (defined in `tsconfig.json`). It's essential to run this command before putting your application into production.
+      * **Purpose:** Compiles all your TypeScript code (`.ts`) into plain JavaScript (`.js`) in the `dist/` directory.
       * **Usage:** `npm run build`
+
+  * **`npm run minify`**:
+
+      * **Command:** `esbuild dist/index.js --bundle --minify --outfile=dist/bundle.min.js --platform=node --sourcemap`
+      * **Purpose:** Uses Esbuild to take your `dist/index.js` (and all its dependencies), bundles them into a single file, minifies the code, and saves it as `dist/bundle.min.js`. The `--platform=node` ensures compatibility with Node.js environments, and `--sourcemap` helps with debugging in production.
+      * **Usage:** `npm run minify` (typically run after `npm run build`)
 
   * **`npm start`**:
 
       * **Command:** `node dist/index.js`
-      * **Purpose:** This script executes the compiled (JavaScript) version of your application. It's the command you should use when deploying your application to a production environment, as JavaScript code is more efficient to run. It requires you to have run `npm run build` beforehand.
+      * **Purpose:** Executes the initially compiled (JavaScript) version of your application located in `dist/`. This is useful for quick checks after `build` without minification.
       * **Usage:** `npm start`
+
+  * **`npm run start:prod`**:
+
+      * **Command:** `npm run build && npm run minify && node dist/bundle.min.js`
+      * **Purpose:** This is the recommended command for preparing and running your application in a production environment. It ensures your code is compiled, bundled, and minified for optimal performance and smaller deployment size.
+      * **Usage:** `npm run start:prod`
 
 -----
 

@@ -25,7 +25,11 @@ export const verifyToken = (token: string): { id: string } | null => {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: string };
     return decoded;
   } catch (error) {
-    console.error('JWT verification failed:', error);
+    if (error instanceof Error) {
+      console.error('JWT verification failed:', error.message);
+    } else {
+      console.error('JWT verification failed:', error);
+    }
     return null;
   }
 };

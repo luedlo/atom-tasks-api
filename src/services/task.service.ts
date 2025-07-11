@@ -1,5 +1,5 @@
-import { db } from '../config/db.firebase';
 import { collection, addDoc, doc, serverTimestamp, getDoc, getDocs, query, where, updateDoc, deleteDoc, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { db } from '../config/db.firebase';
 import { Task } from '../models/task.model';
 
 const tasksCollectionRef = collection(db, 'tasks');
