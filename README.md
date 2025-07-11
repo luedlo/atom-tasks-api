@@ -51,7 +51,7 @@ Make sure you have the following installed:
 
     ```bash
     git clone https://github.com/luedlo/atom-tasks-api
-    cd atom-tasks/backend/atom-tasks
+    cd atom-tasks
     ```
 
 2.  **Install dependencies:**
