@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, serverTimestamp, getDoc, getDocs, query, where, updateDoc, deleteDoc, DocumentData, QueryDocumentSnapshot } from 'firebase/firestore';
+import { collection, addDoc, doc, serverTimestamp, getDoc, getDocs, query, where, updateDoc, deleteDoc, DocumentData, QueryDocumentSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../config/db.firebase';
 import { Task } from '../models/task.model';
 
@@ -61,7 +61,7 @@ export const getTaskById = async (id: string, userId: string): Promise<Task | nu
  */
 export const getAllTasksForUser = async (userId: string): Promise<Task[]> => {
   try {
-    const q = query(tasksCollectionRef, where("userId", "==", userId));
+    const q = query(tasksCollectionRef, where("userId", "==", userId), orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     const tasks: Task[] = [];
     querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
@@ -86,7 +86,7 @@ export const getAllTasksForUser = async (userId: string): Promise<Task[]> => {
  */
 export const getTasksByCompletionStatusForUser = async (completed: boolean, userId: string): Promise<Task[]> => {
   try {
-    const q = query(tasksCollectionRef, where("userId", "==", userId), where("completed", "==", completed));
+    const q = query(tasksCollectionRef, where("userId", "==", userId), where("completed", "==", completed), orderBy("createdAt", "desc"));
     const querySnapshot = await getDocs(q);
     const tasks: Task[] = [];
     querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {

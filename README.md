@@ -113,7 +113,18 @@ Make sure you have the following installed:
     export { db };
     ```
 
-5.  **Adjust CORS in `src/index.ts` (Optional but recommended):**
+5. **Build Firestore Indexes (Important)**
+    ```
+    Since your Firestore queries combine `where` and `orderBy` clauses, you will need to create a **composite index**. When you run the application and perform a complex query for the first time, Firebase will provide an error with a **direct link** to the console to create the index. Click that link and create the index.
+
+    Generally, you'll need an index for:
+
+    * `Collection ID`: `tasks`
+    * `Fields`: `userId` (Ascending), `     `createdAt`(Descending),`**name**\` (Ascending)
+    * `Fields` (if you also filter by `completed`): `userId` (Ascending), `completed` (Ascending), `createdAt` (Descending), `__name__` (Ascending)
+    ```
+
+6.  **Adjust CORS in `src/index.ts` (Optional but recommended):**
     Modify the CORS configuration in `src/index.ts` to allow the origin of your frontend application.
 
     ```typescript
