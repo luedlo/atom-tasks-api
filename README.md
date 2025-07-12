@@ -23,6 +23,7 @@ This project is the backend for a task management application, built with Node.j
 
 ## 🛠️ Technologies Used
 
+* **Backend / Database**:
   * **Node.js:** JavaScript runtime environment.
   * **Express.js:** Web framework for Node.js.
   * **TypeScript:** Programming language.
@@ -34,6 +35,12 @@ This project is the backend for a task management application, built with Node.j
   * **dotenv:** For environment variable management.
   * **Esbuild:** Fast bundler and minifier for production builds.
 
+* **Frontend**:
+    * Github Repository: https://github.com/luedlo/atom-tasks-app
+    * **Angular 17**: Main framework (with Standalone Components).
+    * **TypeScript**: Programming language.
+    * **RxJS**: For handling asynchronous operations and reactivity.
+    * **Bootstrap 5**: CSS framework for UI styles and components.
 -----
 
 ## ⚙️ Project Setup
