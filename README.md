@@ -27,7 +27,6 @@ This project is the backend for a task management application, built with Node.j
   * **Node.js:** JavaScript runtime environment.
   * **Express.js:** Web framework for Node.js.
   * **TypeScript:** Programming language.
-  * **Firebase SDK:** For interacting with Firestore.
   * **Firestore:** Google Firebase's NoSQL database.
   * **JSON Web Tokens (JWT):** For authentication.
   * **CORS:** To manage cross-origin security policies.
